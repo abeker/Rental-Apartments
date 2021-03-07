@@ -12,7 +12,7 @@ Extract Munchen dataset in path Datasets/Munchen, then extract dataset Berlin in
 # Install
 Create virual environment in Anaconda. Follow this (https://github.com/ftn-ai-lab/sc-2019-e2/blob/master/v0-priprema/podesavanje-okruzenja.ipynb)
 
-Open Anaconda Prompt and install with (pip install _name_): 
+Open Anaconda Prompt and install with (pip install _<name>_): 
 * numpy
 * scikit-learn
 * pandas
