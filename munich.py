@@ -1,35 +1,66 @@
 import pandas as pd
+import math
 
 munich_calendar = pd.read_csv('./Datasets/Munich/calendar.csv')
 munich_listings = pd.read_csv('./Datasets/Munich/listings.csv')
 
+def get_mean_value(column):
+    return math.floor(column.mean())
+
+def clean_price(column):
+    return column.str.replace('$', '', regex=True).astype(str)
+
+def get_mapping(column):
+    return dict([(y, x + 1) for x, y in enumerate(sorted(set(column)))])
+
+def map_string_properties_to_numbers():
+    bed_type_mapping = get_mapping(munich_listings['bed_type'].unique())
+    property_type_mapping = get_mapping(munich_listings['property_type'].unique())
+    room_type_mapping = get_mapping(munich_listings['room_type'].unique())
+    cancellation_policy_mapping = get_mapping(munich_listings['cancellation_policy'].unique())
+    munich_listings['bed_type'] = munich_listings['bed_type']\
+        .replace(bed_type_mapping.keys(), bed_type_mapping.values())
+    munich_listings['property_type'] = munich_listings['property_type'] \
+        .replace(property_type_mapping.keys(), property_type_mapping.values())
+    munich_listings['room_type'] = munich_listings['room_type'] \
+        .replace(room_type_mapping.keys(), room_type_mapping.values())
+    munich_listings['cancellation_policy'] = munich_listings['cancellation_policy'] \
+        .replace(cancellation_policy_mapping.keys(), cancellation_policy_mapping.values())
+
 def unbox_listings():
-    munich_listings.drop(
-        ['listing_url', 'scrape_id', 'last_scraped', 'summary', 'space', 'description', 'experiences_offered',
-         'neighborhood_overview', 'notes', 'transit', 'interaction', 'thumbnail_url', 'medium_url', 'picture_url',
-         'xl_picture_url', 'host_url', 'host_name', 'host_location', 'host_about', 'host_acceptance_rate',
-         'host_thumbnail_url', 'host_picture_url', 'host_neighbourhood', 'street', 'neighbourhood',
-         'neighbourhood_cleansed', 'neighbourhood_group_cleansed', 'city', 'state', 'market', 'smart_location',
-         'country_code', 'country', 'is_location_exact', 'calendar_updated', 'has_availability', 'availability_30',
-         'availability_60', 'availability_90', 'availability_365', 'calendar_last_scraped', 'requires_license',
-         'license', 'jurisdiction_names'],
-        axis=1, inplace=True)
+    munich_listings['bathrooms'] = munich_listings['bathrooms'].fillna(get_mean_value(munich_listings['bathrooms']))
+    munich_listings['bedrooms'] = munich_listings['bedrooms'].fillna(get_mean_value(munich_listings['bedrooms']))
+    munich_listings['beds'] = munich_listings['beds'].fillna(get_mean_value(munich_listings['beds']))
+    munich_listings['extra_people'] = clean_price(munich_listings['extra_people'])
+    map_string_properties_to_numbers()
+    df = munich_listings[['id', 'latitude', 'longitude',
+                          'property_type', 'room_type', 'bathrooms', 'bedrooms', 'beds', 'bed_type', 'amenities',
+                          'guests_included', 'extra_people', 'minimum_nights', 'number_of_reviews',
+                          'cancellation_policy']]
+    # print(df.nunique())
+    # print(df['property_type'].unique())
+    # print(df['cancellation_policy'].unique())
+    # print(df['room_type'].unique())
+    # print(df['bed_type'].unique())
+    # print(df.isna().sum())
+    return df
 
 def unbox_calendar():
-    munich_calendar['price'] = munich_calendar['price'].str.replace('$', '', regex=True).astype(str)
-    munich_calendar['adjusted_price'] = munich_calendar['adjusted_price'].str.replace('$', '', regex=True).astype(str)
+    munich_calendar['price'] = clean_price(munich_calendar['price'])
+    munich_calendar['adjusted_price'] = clean_price(munich_calendar['adjusted_price'])
     munich_calendar['date'] = pd.to_datetime(munich_calendar['date'])
     munich_calendar['available'] = munich_calendar['available'].replace(['f', 't'], [0, 1])
     munich_calendar.drop('adjusted_price', axis=1, inplace=True)
+    return munich_calendar
 
 def collect_data():
     print('collecting...')
     return 'something collected'
 
 def get_munich_data():
-    unbox_calendar()
-    unbox_listings()
+    unboxed_calendar = unbox_calendar()
+    unboxed_listings = unbox_listings()
     df_collected = collect_data()
-    # print(munich_calendar.head(5).to_string())
-    print(munich_listings.columns)
+    print(unboxed_listings.head(5).to_string())
+    # print(unboxed_listings.columns)
     return df_collected
