@@ -9,7 +9,7 @@ def get_points_for_amentities(amenities_json):
         amenitie = amenitie.replace("\"", "")
         amenitie = amenitie.strip()
         summary = summary + mapper.get_points(amenitie)
-        print(amenitie, ':', mapper.get_points(amenitie))
-    print('sum: ', summary)
-    print('------------------------------------------')
+        # print(amenitie, ':', mapper.get_points(amenitie))
+    # print('sum: ', summary)
+    # print('------------------------------------------')
     return summary

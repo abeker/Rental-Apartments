@@ -35,8 +35,7 @@ def unbox_listings():
     munich_listings['extra_people'] = clean_price(munich_listings['extra_people'])
     map_string_properties_to_numbers()
     for index, amenities in enumerate(munich_listings['amenities'].values):
-        if index < 5:
-            utility.get_points_for_amentities(amenities)
+        munich_listings.at[index, 'amenities'] = utility.get_points_for_amentities(amenities)
 
     df = munich_listings[['id', 'latitude', 'longitude',
                           'property_type', 'room_type', 'bathrooms', 'bedrooms', 'beds', 'bed_type', 'amenities',
@@ -46,7 +45,6 @@ def unbox_listings():
 
 def unbox_calendar():
     munich_calendar['price'] = clean_price(munich_calendar['price'])
-    munich_calendar['adjusted_price'] = clean_price(munich_calendar['adjusted_price'])
     munich_calendar['date'] = pd.to_datetime(munich_calendar['date'])
     munich_calendar['available'] = munich_calendar['available'].replace(['f', 't'], [0, 1])
     munich_calendar.drop('adjusted_price', axis=1, inplace=True)
