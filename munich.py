@@ -1,5 +1,6 @@
 import pandas as pd
 import math
+import utility.amentities as utility
 
 munich_calendar = pd.read_csv('./Datasets/Munich/calendar.csv')
 munich_listings = pd.read_csv('./Datasets/Munich/listings.csv')
@@ -33,21 +34,17 @@ def unbox_listings():
     munich_listings['beds'] = munich_listings['beds'].fillna(get_mean_value(munich_listings['beds']))
     munich_listings['extra_people'] = clean_price(munich_listings['extra_people'])
     map_string_properties_to_numbers()
+    for index, amenities in enumerate(munich_listings['amenities'].values):
+        munich_listings.at[index, 'amenities'] = utility.get_points_for_amentities(amenities)
+
     df = munich_listings[['id', 'latitude', 'longitude',
                           'property_type', 'room_type', 'bathrooms', 'bedrooms', 'beds', 'bed_type', 'amenities',
                           'guests_included', 'extra_people', 'minimum_nights', 'number_of_reviews',
                           'cancellation_policy']]
-    # print(df.nunique())
-    # print(df['property_type'].unique())
-    # print(df['cancellation_policy'].unique())
-    # print(df['room_type'].unique())
-    # print(df['bed_type'].unique())
-    # print(df.isna().sum())
     return df
 
 def unbox_calendar():
     munich_calendar['price'] = clean_price(munich_calendar['price'])
-    munich_calendar['adjusted_price'] = clean_price(munich_calendar['adjusted_price'])
     munich_calendar['date'] = pd.to_datetime(munich_calendar['date'])
     munich_calendar['available'] = munich_calendar['available'].replace(['f', 't'], [0, 1])
     munich_calendar.drop('adjusted_price', axis=1, inplace=True)
