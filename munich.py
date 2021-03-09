@@ -14,6 +14,11 @@ def clean_price(column):
 def get_mapping(column):
     return dict([(y, x + 1) for x, y in enumerate(sorted(set(column)))])
 
+def handle_duplicates(df):
+    df = df.drop_duplicates()
+    df = df.groupby('listing_id').mean().reset_index()
+    return df
+
 def map_string_properties_to_numbers():
     bed_type_mapping = get_mapping(munich_listings['bed_type'].unique())
     property_type_mapping = get_mapping(munich_listings['property_type'].unique())
@@ -48,16 +53,19 @@ def unbox_calendar():
     munich_calendar['date'] = pd.to_datetime(munich_calendar['date'])
     munich_calendar['available'] = munich_calendar['available'].replace(['f', 't'], [0, 1])
     munich_calendar.drop('adjusted_price', axis=1, inplace=True)
-    return munich_calendar
+    munich_calendar['price'] = munich_calendar['price'].astype(str).replace('[,]', '', regex=True).astype(float)
+    df = munich_calendar[['listing_id', 'price']]
+    df = handle_duplicates(df)
+    return df
 
-def collect_data():
+def collect_data(df_calendar, df_listings):
     print('collecting...')
-    return 'something collected'
+    merged_df = pd.merge(df_listings, df_calendar.rename(columns={'listing_id': 'id'}), on='id', how='left')
+    return merged_df
 
 def get_munich_data():
     unboxed_calendar = unbox_calendar()
     unboxed_listings = unbox_listings()
-    df_collected = collect_data()
-    print(unboxed_listings.head(5).to_string())
-    # print(unboxed_listings.columns)
+    df_collected = collect_data(unboxed_calendar, unboxed_listings)
+    print(df_collected.head(5).to_string())
     return df_collected
