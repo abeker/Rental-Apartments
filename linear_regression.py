@@ -10,6 +10,7 @@ def print_statistics(model, x, y):
 def train(x, y):
     x, y = np.array(x), np.array(y)
     model = LinearRegression().fit(x, y)
+    print_statistics(model, x, y)
     return model
 
 def predict(model, x):

@@ -67,5 +67,4 @@ def get_munich_data():
     unboxed_calendar = unbox_calendar()
     unboxed_listings = unbox_listings()
     df_collected = collect_data(unboxed_calendar, unboxed_listings)
-    print(df_collected.head(5).to_string())
     return df_collected
