@@ -19,6 +19,16 @@ def handle_duplicates(df):
     df = df.groupby('listing_id').mean().reset_index()
     return df
 
+def clear_outliers(dataframe):
+    dataframe = dataframe[dataframe['price'] < 850]
+    dataframe = dataframe[dataframe['amenities'] < 200]
+    dataframe = dataframe[dataframe['bathrooms'] < 6]
+    dataframe = dataframe[dataframe['bedrooms'] < 15]
+    dataframe = dataframe[dataframe['guests_included'] < 20]
+    dataframe = dataframe[dataframe['minimum_nights'] < 130]
+    dataframe = dataframe[dataframe['number_of_reviews'] < 520]
+    return dataframe
+
 def map_string_properties_to_numbers():
     bed_type_mapping = get_mapping(munich_listings['bed_type'].unique())
     property_type_mapping = get_mapping(munich_listings['property_type'].unique())
