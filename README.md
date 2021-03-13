@@ -16,3 +16,4 @@ Open Anaconda Prompt and install with (pip install _[name]_):
 * numpy
 * scikit-learn
 * pandas
+* seaborn
