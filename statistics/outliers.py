@@ -40,3 +40,8 @@ def cap_outliers(column, zscore_threshold=2):
     df_outliers = column.loc[outliers]
     df_outliers = column[column.index.isin(df_outliers.index)]
     print(df_outliers.to_string())
+
+def displot(column_array, dataframe, target='price'):
+    for column in column_array:
+        sns.displot(dataframe, x=column, hue=target, height=10, aspect=2, multiple="dodge")
+        plt.show()
