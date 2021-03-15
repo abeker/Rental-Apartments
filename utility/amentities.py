@@ -22,7 +22,7 @@ def get_points_for_amentities(amenities_json):
     for amenitie in am_splitted:
         amenitie = amenitie.replace("\"", "")
         amenitie = amenitie.strip()
-        summary = (summary + mapper.get_points(amenitie))
+        summary = summary + mapper.get_points(amenitie)
         # print(amenitie, ':', mapper.get_points(amenitie))
     # print('sum: ', summary)
     # print('------------------------------------------')

@@ -5,6 +5,14 @@ import seaborn as sns
 from scipy import stats
 import numpy as np
 
+def get_outliers_statistics(df):
+    # boxplot(df, 'amenities')
+    subplots(df)
+    # scatter_plot(df, 'amenities', 'price')
+    # pairplot(df)
+    # cap_outliers(df['price'], 3)
+    # displot(['guests_included'], df, 'price')
+
 def boxplot(dataframe, column):
     print('---------- outliers ----------')
     print(dataframe.sort_values(by=[column], ascending=False).head(100).to_string())
