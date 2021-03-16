@@ -25,8 +25,6 @@ def print_corelation(x_values, y_values):
     print('----------corelation----------')
     x = pd.Series(x_values)
     y = pd.Series(y_values)
-    print(x)
-    print(y)
     plot(x, y, 'amenities', 'price')
     plot_histogram(y, 'Price Histogram', 'price')
     print('Pearson’s: ', x.corr(y))
