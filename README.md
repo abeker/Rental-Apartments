@@ -3,7 +3,7 @@ Project for SIAP
 
 # Download
 Firstly download datasets:
-* Munchen (https://www.kaggle.com/chriskue/munich-airbnb-data)
+* Munich (https://www.kaggle.com/chriskue/munich-airbnb-data)
 * Berlin (https://www.kaggle.com/brittabettendorf/berlin-airbnb-data)
 
 Then create folder in root of the project, name: *Datasets*. 
