@@ -73,16 +73,14 @@ def get_berlin_dataset():
     df = pd.merge(unboxed_listings, unboxed_calendar.rename(columns={'listing_id': 'id'}), on='id', how='left')
     return df
 
-
-
-#print('change calendar summary...')
-#unboxed_calendar = unbox_calendar()
-#print(unboxed_calendar.head(10))
-#print('change listings summary')
-#unbox_listings = unbox_listings()
-#print(unbox_listings.head(10))
-print('clean berlin dataset')
-#df = get_berlin_dataset()
-#print(df.head(10))
+# print('change calendar summary...')
+# unboxed_calendar = unbox_calendar()
+# print(unboxed_calendar.head(10))
+# print('change listings summary')
+# unbox_listings = unbox_listings()
+# print(unbox_listings.head(10))
+# print('clean berlin dataset')
+# df = get_berlin_dataset()
+# print(df.head(10))
 
 
