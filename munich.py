@@ -2,8 +2,8 @@ import pandas as pd
 import utility.amentities as amenitie_utility
 import utility.host_verifications as verification_utility
 
-munich_calendar = pd.read_csv('./Datasets/Munich/calendar.csv')
-munich_listings = pd.read_csv('./Datasets/Munich/listings.csv')
+munich_calendar = pd.read_csv('./Datasets/Munich/calendar.csv',  low_memory=False)
+munich_listings = pd.read_csv('./Datasets/Munich/listings.csv',  low_memory=False)
 
 def get_median_value(column):
     mads = column.mad() * 1.4826
