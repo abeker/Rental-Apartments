@@ -2,8 +2,8 @@ import pandas as pd
 import math
 import utility.amentities as utility
 
-munich_calendar = pd.read_csv('./Datasets/Munich/calendar.csv')
-munich_listings = pd.read_csv('./Datasets/Munich/listings.csv')
+munich_calendar = pd.read_csv('./Datasets/Munich/calendar.csv',  low_memory=False)
+munich_listings = pd.read_csv('./Datasets/Munich/listings.csv',  low_memory=False)
 
 def get_mean_value(column):
     return math.floor(column.mean())
