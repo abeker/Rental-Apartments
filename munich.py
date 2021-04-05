@@ -1,9 +1,11 @@
 import pandas as pd
 import utility.amentities as amenitie_utility
 import utility.host_verifications as verification_utility
+import math
 
 munich_calendar = pd.read_csv('./Datasets/Munich/calendar.csv',  low_memory=False)
 munich_listings = pd.read_csv('./Datasets/Munich/listings.csv',  low_memory=False)
+munich_center = [48.13743, 11.57549]
 
 def get_median_value(column):
     mads = column.mad() * 1.4826
@@ -19,6 +21,18 @@ def handle_duplicates(df):
     df = df.drop_duplicates()
     df = df.groupby('listing_id').mean().reset_index()
     return df
+
+def transform_coordinates(coordinates):
+    coord_splitted = coordinates.split(',')
+    distance = abs(math.sqrt((float(coord_splitted[0]) - munich_center[0]) ** 2
+                             + (float(coord_splitted[1]) - munich_center[1]) ** 2))
+    return distance*100
+
+def handle_coordinates(df, column_lat, column_long):
+    df['location'] = df[column_lat].astype(str) + ',' + df[column_long].astype(str)
+    df['location'] = df['location'].apply(lambda x: transform_coordinates(x))
+    df.drop(columns=column_lat, inplace=True)
+    df.drop(columns=column_long, inplace=True)
 
 def handle_na_values(df):
     df = df.apply(lambda x: x.replace(['f', 't'], [0, 1]) if x.name in ['host_identity_verified', 'host_has_profile_pic',
@@ -91,6 +105,7 @@ def unbox_listings():
     df = handle_na_values(df)
     df['host_since_day'], df['host_since_month'], df['host_since_year'], day_of_week = transform_date(df, 'host_since')
     df.drop(columns='host_since', inplace=True)
+    handle_coordinates(df, 'latitude', 'longitude')
     return df
 
 def unbox_calendar():
@@ -104,6 +119,7 @@ def unbox_calendar():
 def collect_data(df_calendar, df_listings):
     print('collecting...')
     merged_df = pd.merge(df_calendar.rename(columns={'listing_id': 'id'}), df_listings, on='id', how='left')
+    merged_df.drop(columns='id', inplace=True)
     return merged_df
 
 def get_munich_data():
@@ -112,5 +128,5 @@ def get_munich_data():
     df_collected = collect_data(unboxed_calendar, unboxed_listings)
     df_collected = clear_outliers(df_collected)
     df_collected.to_csv('./Datasets/cleaned/cleaned.csv')
-    # print(df_collected.head(10).to_string())
+    print(df_collected.head(10).to_string())
     return df_collected
