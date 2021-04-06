@@ -19,13 +19,13 @@ def print_statistics(model, x, y):
     print('slope:', model.coef_)
 
 def split_dataset(x, y):
-    X, Y = np.array(x), np.array(y)
-    x_remaining, x_test, y_remaining, y_test = train_test_split(X, Y, test_size=test_ratio)
+    x_in, y_in = np.array(x), np.array(y)
+    x_remaining, x_test, y_remaining, y_test = train_test_split(x_in, y_in, test_size=test_ratio)
     ratio_remaining = 1 - test_ratio
     ratio_val_adjusted = test_ratio / ratio_remaining
     x_train, x_val, y_train, y_val = train_test_split(x_remaining, y_remaining, test_size=ratio_val_adjusted)
-    # return x_train, y_train, x_test, y_test, x_val, y_val
-    return x_train, y_train
+    return x_train, y_train, x_test, y_test, x_val, y_val
+    # return x_train, y_train
 
 def train(df, type_of_regression):
     train_columns = df.drop('price', axis=1)
@@ -39,14 +39,14 @@ def train(df, type_of_regression):
         return train_lasso(train_columns, price_column)
 
 def train_ridge(x, y):
-    x_train, y_train = split_dataset(x, y)
+    x_train, y_train, x_test, y_test, x_val, y_val = split_dataset(x, y)
     ridge_model = Ridge(normalize=True)
     ridge_model = ridge_model.fit(x_train, y_train)
     print_statistics(ridge_model, x_train, y_train)
     return ridge_model
 
 def train_lasso(x, y):
-    x_train, y_train = split_dataset(x, y)
+    x_train, y_train, x_test, y_test, x_val, y_val = split_dataset(x, y)
     lasso_model = Lasso(normalize=True).fit(x_train, y_train)
     print_statistics(lasso_model, x_train, y_train)
     return lasso_model
