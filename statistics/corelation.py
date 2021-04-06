@@ -1,6 +1,7 @@
 import pandas as pd
 import scipy.stats
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 def plot(x, y, x_label_name, y_label_name):
     slope, intercept, r, p, stderr = scipy.stats.linregress(x, y)
@@ -31,3 +32,12 @@ def print_corelation(x_values, y_values):
     print('Spearman’s: ', x.corr(y, method='spearman'))
     print('Kendall’s: ', x.corr(y, method='kendall'))
     print('----------corelation end----------')
+
+def print_df_corelation(df):
+    corrmat = df.corr()
+    top_corr_features = corrmat.index
+    fig, ax = plt.subplots(figsize=(30, 30))
+    # plot heat map
+    heatmap = sns.heatmap(df[top_corr_features].corr(), vmin=-1, vmax=1, annot=True, cmap="BrBG", linewidths=1, ax=ax)
+    heatmap.set_title('Correlation Heatmap', fontdict={'fontsize': 15}, pad=15)
+    plt.show()

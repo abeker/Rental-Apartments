@@ -1,4 +1,3 @@
-from sklearn.datasets import load_boston
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -22,9 +21,7 @@ def boxplot(dataframe, column):
     print('---------- outliers end ----------')
 
 def subplots(dataframe):
-    df = dataframe.drop('id', axis=1)
-    fig, ax = plt.subplots(figsize=(16, 8))
-    ax = sns.boxplot(data=df, orient="h", palette="Set2")
+    ax = sns.boxplot(data=dataframe, orient="h", palette="Set2")
     ax.plot()
     plt.show()
 
