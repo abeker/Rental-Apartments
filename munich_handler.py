@@ -41,7 +41,8 @@ def handle_na_values(df):
                                                                         'instant_bookable',
                                                                         'require_guest_phone_verification'] else x)
     df = df.apply(lambda x: x.fillna(0) if x.name in ['host_has_profile_pic', 'instant_bookable',
-                                                      'require_guest_phone_verification', 'bathrooms'] else x)
+                                                      'require_guest_phone_verification', 'bathrooms',
+                                                      'zipcode'] else x)
     df = df.apply(lambda x: x.fillna(get_median_value(x)) if x.dtype.kind in 'iufc' else x)
     df = df[~df['amenities'].isin([0])]
     return df
@@ -62,8 +63,15 @@ def clear_outliers(dataframe):
     dataframe = dataframe[dataframe['minimum_nights'] < 32]
     dataframe = dataframe[dataframe['number_of_reviews'] < 320]
     dataframe = dataframe[dataframe['number_of_reviews'] > 10]
+    dataframe = dataframe[dataframe['zipcode'] > 10]
     apply_log(dataframe)
     return dataframe
+
+def apply_log(df):
+    df['host_since_days'] = np.log(df['host_since_days'])
+    df['number_of_reviews'] = np.log(df['number_of_reviews'])
+    df['price'] = np.log(df['price'])
+    df['zipcode'] = np.log(df['zipcode'])
 
 def map_string_properties_to_numbers():
     bed_type_mapping = get_mapping(munich_listings['bed_type'].unique())
@@ -100,11 +108,6 @@ def handle_host_duration(df):
     df['host_since_days'] = (df['host_since'] - curr_time).dt.days.abs()
     df.drop(columns=['host_since'], inplace=True)
 
-def apply_log(df):
-    df['host_since_days'] = np.log(df['host_since_days'])
-    df['number_of_reviews'] = np.log(df['number_of_reviews'])
-    df['price'] = np.log(df['price'])
-
 def unbox_listings():
     map_string_properties_to_numbers()
     for index, amenities in enumerate(munich_listings['amenities'].values):
@@ -114,11 +117,12 @@ def unbox_listings():
     munich_listings['extra_people'] = clean_price(munich_listings['extra_people'])
     munich_listings['security_deposit'] = clean_price(munich_listings['security_deposit'])
     munich_listings['security_deposit'] = munich_listings['security_deposit'].astype(str).replace('[,]', '', regex=True).astype(float)
+    munich_listings['zipcode'] = munich_listings['zipcode'].str.replace("\n[0-9]*", "").astype(float)
 
     df = munich_listings[['id', 'latitude', 'longitude',
                           'property_type', 'room_type', 'bedrooms', 'bed_type', 'amenities',
                           'guests_included', 'extra_people', 'minimum_nights', 'number_of_reviews',
-                          'cancellation_policy', 'accommodates',
+                          'cancellation_policy', 'accommodates', 'zipcode',
                           'neighbourhood', 'instant_bookable',
                           'require_guest_phone_verification', 'host_verifications',
                           'summary', 'description', 'host_since']]
