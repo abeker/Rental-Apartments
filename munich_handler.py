@@ -2,6 +2,8 @@ import pandas as pd
 import utility.amentities as amenitie_utility
 import utility.host_verifications as verification_utility
 import math
+import numpy as np
+pd.options.mode.chained_assignment = None  # default='warn'
 
 munich_calendar = pd.read_csv('./Datasets/Munich/calendar.csv',  low_memory=False)
 munich_listings = pd.read_csv('./Datasets/Munich/listings.csv',  low_memory=False)
@@ -41,7 +43,6 @@ def handle_na_values(df):
     df = df.apply(lambda x: x.fillna(0) if x.name in ['host_has_profile_pic', 'instant_bookable',
                                                       'require_guest_phone_verification', 'bathrooms'] else x)
     df = df.apply(lambda x: x.fillna(get_median_value(x)) if x.dtype.kind in 'iufc' else x)
-    df = df[df['host_since'].notna()]
     df = df[~df['amenities'].isin([0])]
     return df
 
@@ -54,14 +55,14 @@ def transform_date(df, date_column):
     return days, months, years, day_of_week
 
 def clear_outliers(dataframe):
-    dataframe = dataframe[dataframe['price'] < 550]
+    dataframe = dataframe[dataframe['price'] < 700]
     dataframe = dataframe[dataframe['amenities'] < 200]
-    dataframe = dataframe[dataframe['bathrooms'] < 6]
     dataframe = dataframe[dataframe['bedrooms'] < 15]
     dataframe = dataframe[dataframe['guests_included'] < 20]
-    dataframe = dataframe[dataframe['minimum_nights'] < 60]
+    dataframe = dataframe[dataframe['minimum_nights'] < 32]
     dataframe = dataframe[dataframe['number_of_reviews'] < 320]
-    dataframe = dataframe[dataframe['security_deposit'] < 4600]
+    dataframe = dataframe[dataframe['number_of_reviews'] > 10]
+    apply_log(dataframe)
     return dataframe
 
 def map_string_properties_to_numbers():
@@ -82,6 +83,28 @@ def map_string_properties_to_numbers():
     munich_listings['neighbourhood'] = munich_listings['neighbourhood'] \
         .replace(neighbourhood_mapping.keys(), neighbourhood_mapping.values())
 
+def handle_descriptive_features(df, column_array):
+    for column in column_array:
+        df[column].loc[~df[column].isnull()] = 1    # not nan
+        df[column].loc[df[column].isnull()] = 0     # nan
+    return df
+
+def handle_review(df):
+    df[['first_review', 'last_review']] = df[['first_review', 'last_review']].apply(pd.to_datetime)
+    df['review_range'] = (df['last_review'] - df['first_review']).dt.days
+    df.drop(columns=['first_review', 'last_review'], inplace=True)
+
+def handle_host_duration(df):
+    df['host_since'] = pd.to_datetime(df['host_since'])
+    curr_time = pd.to_datetime("now")
+    df['host_since_days'] = (df['host_since'] - curr_time).dt.days.abs()
+    df.drop(columns=['host_since'], inplace=True)
+
+def apply_log(df):
+    df['host_since_days'] = np.log(df['host_since_days'])
+    df['number_of_reviews'] = np.log(df['number_of_reviews'])
+    df['price'] = np.log(df['price'])
+
 def unbox_listings():
     map_string_properties_to_numbers()
     for index, amenities in enumerate(munich_listings['amenities'].values):
@@ -93,14 +116,19 @@ def unbox_listings():
     munich_listings['security_deposit'] = munich_listings['security_deposit'].astype(str).replace('[,]', '', regex=True).astype(float)
 
     df = munich_listings[['id', 'latitude', 'longitude',
-                          'property_type', 'room_type', 'bathrooms', 'beds', 'bedrooms', 'bed_type', 'amenities',
+                          'property_type', 'room_type', 'bedrooms', 'bed_type', 'amenities',
                           'guests_included', 'extra_people', 'minimum_nights', 'number_of_reviews',
-                          'cancellation_policy', 'accommodates', 'review_scores_rating', 'security_deposit',
-                          'neighbourhood', 'host_has_profile_pic', 'instant_bookable',
-                          'require_guest_phone_verification', 'host_verifications', 'host_since']]
-    df = handle_na_values(df)
-    df.drop(columns='host_since', inplace=True)
+                          'cancellation_policy', 'accommodates',
+                          'neighbourhood', 'instant_bookable',
+                          'require_guest_phone_verification', 'host_verifications',
+                          'summary', 'description', 'host_since']]
+    print(df.isna().sum())
+    print(df.shape)
+    handle_descriptive_features(df, ['summary', 'description'])
     handle_coordinates(df, 'latitude', 'longitude')
+    handle_host_duration(df)
+
+    df = handle_na_values(df)
     return df
 
 def unbox_calendar():

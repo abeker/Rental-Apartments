@@ -26,7 +26,8 @@ def get_points_for_amentities(amenities_json):
         # print(amenitie, ':', mapper.get_points(amenitie))
     # print('sum: ', summary)
     # print('------------------------------------------')
-    return summary
+    number_of_amenities = len(am_splitted)
+    return number_of_amenities
 
 def get_list_of_all_amenities(amenities_column):
     list_of_amenities = []

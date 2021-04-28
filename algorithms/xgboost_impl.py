@@ -153,7 +153,8 @@ def train(dataframe, to_predict=True, print_stats=True):
         'eta': 0.05,
         'subsample': 1,
         'colsample_bytree': 1,
-        'eval_metric': 'mae'
+        'eval_metric': 'mae',
+        'gamma': 0
     }
     num_boost_round = 999
     model = xgb.train(
