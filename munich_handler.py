@@ -154,6 +154,6 @@ def get_munich_data():
     unboxed_listings = unbox_listings()
     df_collected = collect_data(unboxed_calendar, unboxed_listings)
     df_collected = clear_outliers(df_collected)
-    df_collected.to_csv('./Datasets/cleaned/cleaned.csv')
+   # df_collected.to_csv('./Datasets/cleaned/cleaned.csv')
     print(df_collected.head(10).to_string())
     return df_collected

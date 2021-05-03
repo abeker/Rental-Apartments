@@ -13,6 +13,6 @@ corelation.print_df_corelation(df_munich)
 model = regression_impl.train(df_munich, enum.RegressionType.LINEAR)
 outliers.get_outliers_statistics(df_munich)
 xgboost_impl.train(df_munich, True, True)
-# adaboost_impl.train(df_munich, True, True)
+#adaboost_impl.train(df_munich, True, True)
 #random_forest_impl.train(df_munich)
 
