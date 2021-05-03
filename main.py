@@ -7,9 +7,9 @@ from algorithms import adaboost_impl
 import utility.enums as enum
 
 df_munich = munich_handler.get_munich_data()
-# outliers.get_outliers_statistics(df_munich)
-# corelation.print_df_corelation(df_munich)
+corelation.print_df_corelation(df_munich)
 # df_berlin = berlin.get_berlin_dataset()
-# model = regression_impl.train(df_munich, enum.RegressionType.LINEAR)
-# xgboost_impl.train(df_munich, True, True)
-adaboost_impl.train(df_munich, True, True)
+model = regression_impl.train(df_munich, enum.RegressionType.LINEAR)
+outliers.get_outliers_statistics(df_munich)
+xgboost_impl.train(df_munich, True, True)
+# adaboost_impl.train(df_munich, True, True)
