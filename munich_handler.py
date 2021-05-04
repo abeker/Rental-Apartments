@@ -89,6 +89,7 @@ def handle_host_duration(df):
     curr_time = pd.to_datetime("now")
     df['host_since_days'] = (df['host_since'] - curr_time).dt.days.abs()
     df.drop(columns=['host_since'], inplace=True)
+    return df
 
 def clear_outliers(dataframe):
     dataframe = dataframe[dataframe['price'] < 700]
@@ -122,7 +123,6 @@ def unbox_listings():
     munich_listings['security_deposit'] = clean_price(munich_listings['security_deposit'])
     munich_listings['security_deposit'] = munich_listings['security_deposit'].astype(str).replace('[,]', '', regex=True).astype(float)
     munich_listings['zipcode'] = munich_listings['zipcode'].str.replace("\n[0-9]*", "").astype(float)
-
     df = munich_listings[['id', 'latitude', 'longitude',
                           'property_type', 'room_type', 'bedrooms', 'bed_type', 'amenities',
                           'guests_included', 'extra_people', 'minimum_nights', 'number_of_reviews',
@@ -154,6 +154,7 @@ def collect_data(df_calendar, df_listings):
     return merged_df
 
 def get_munich_data():
+    print("colecting munich data")
     unboxed_calendar = unbox_calendar()
     unboxed_listings = unbox_listings()
     df_collected = collect_data(unboxed_calendar, unboxed_listings)
