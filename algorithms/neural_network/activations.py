@@ -12,3 +12,9 @@ def relu(x):
 
 def relu_prime(x):
     return 1. * (x > 0)
+
+def linear(x):
+    return x
+
+def linear_prime(x):
+    return 1

@@ -3,7 +3,7 @@ from algorithms import regression_impl as reg
 from algorithms.neural_network.network import Network
 from algorithms.neural_network.fc_layer import FCLayer
 from algorithms.neural_network.activation_layer import ActivationLayer
-from algorithms.neural_network.activations import tanh, tanh_prime, relu, relu_prime
+from algorithms.neural_network.activations import tanh, tanh_prime, linear, linear_prime, relu, relu_prime
 from algorithms.neural_network.losses import mse, mse_prime
 
 def extract_df(df):
@@ -18,7 +18,6 @@ def sigmoid(x):
 def sigmoid_der(x):
     return sigmoid(x)*(1-sigmoid(x))
 
-
 def train(dataframe):
     x, y = extract_df(dataframe)
     x_train, y_train, x_test, y_test, x_val, y_val = reg.split_dataset(x, y)
@@ -26,10 +25,12 @@ def train(dataframe):
     x_shape, y_shape = x_train.shape
 
     net = Network()
-    net.add(FCLayer(21, 100))
+    net.add(FCLayer(y_shape, 20))
     net.add(ActivationLayer(relu, relu_prime))
-    net.add(FCLayer(100, 1))
+    net.add(FCLayer(20, 5))
     net.add(ActivationLayer(relu, relu_prime))
+    net.add(FCLayer(5, 1))
+    net.add(ActivationLayer(linear, linear_prime))
 
     # train
     net.use(mse, mse_prime)

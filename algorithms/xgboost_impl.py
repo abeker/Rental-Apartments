@@ -1,5 +1,6 @@
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import r2_score
 from algorithms import regression_impl as reg
 import numpy as np
 import xgboost as xgb
@@ -171,6 +172,8 @@ def train(dataframe, to_predict=True, print_stats=True):
         if print_stats:
             rmse = np.sqrt(mean_squared_error(y_test, predictions))
             mae = mean_absolute_error(model.predict(test_mat), y_test)
+            r_sq = r2_score(y_test, predictions)
+            print("coefficient of determination:: %f" % r_sq)
             print("RMSE: %f" % rmse)
             print("MAE: %f" % mae)
         return predictions
