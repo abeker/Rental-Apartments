@@ -42,7 +42,7 @@ def handle_na_values(df):
                                                                         'require_guest_phone_verification'] else x)
     df = df.apply(lambda x: x.fillna(0) if x.name in ['host_has_profile_pic', 'instant_bookable',
                                                       'require_guest_phone_verification', 'bathrooms',
-                                                      'zipcode'] else x)
+                                                      'zipcode', 'host_since'] else x)
     df = df.apply(lambda x: x.fillna(get_median_value(x)) if x.dtype.kind in 'iufc' else x)
     df = df[~df['amenities'].isin([0])]
     return df
@@ -107,6 +107,7 @@ def handle_host_duration(df):
     curr_time = pd.to_datetime("now")
     df['host_since_days'] = (df['host_since'] - curr_time).dt.days.abs()
     df.drop(columns=['host_since'], inplace=True)
+    return df
 
 def unbox_listings():
     map_string_properties_to_numbers()
@@ -118,7 +119,6 @@ def unbox_listings():
     munich_listings['security_deposit'] = clean_price(munich_listings['security_deposit'])
     munich_listings['security_deposit'] = munich_listings['security_deposit'].astype(str).replace('[,]', '', regex=True).astype(float)
     munich_listings['zipcode'] = munich_listings['zipcode'].str.replace("\n[0-9]*", "").astype(float)
-
     df = munich_listings[['id', 'latitude', 'longitude',
                           'property_type', 'room_type', 'bedrooms', 'bed_type', 'amenities',
                           'guests_included', 'extra_people', 'minimum_nights', 'number_of_reviews',
@@ -126,6 +126,7 @@ def unbox_listings():
                           'neighbourhood', 'instant_bookable',
                           'require_guest_phone_verification', 'host_verifications',
                           'summary', 'description', 'host_since']]
+
     print(df.isna().sum())
     print(df.shape)
     handle_descriptive_features(df, ['summary', 'description'])
@@ -150,10 +151,13 @@ def collect_data(df_calendar, df_listings):
     return merged_df
 
 def get_munich_data():
+    print("colecting munich data")
     unboxed_calendar = unbox_calendar()
     unboxed_listings = unbox_listings()
     df_collected = collect_data(unboxed_calendar, unboxed_listings)
     df_collected = clear_outliers(df_collected)
-   # df_collected.to_csv('./Datasets/cleaned/cleaned.csv')
+    df_collected.to_csv('./Datasets/cleaned/cleaned.csv')
+    print(df_collected.isna().sum())
+    print(df_collected.shape)
     print(df_collected.head(10).to_string())
     return df_collected

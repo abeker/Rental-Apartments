@@ -14,9 +14,10 @@ def prepare_data(dataset):
    #divide the data into training and testing sets
    X_train, y_train, X_test, y_test, x_val, y_val = reg.split_dataset(X, y)
    # Feature Scaling
-   sc = StandardScaler()
-   X_train = sc.fit_transform(X_train)
-   X_test = sc.transform(X_test)
+   #dataset = dataset.reset_index()
+   #sc = StandardScaler()
+   #X_train = sc.fit_transform(X_train)
+   #X_test = sc.transform(X_test)
    return X_train, X_test, y_train, y_test
 
 def print_statistic(model, X_train, y_train, y_test, y_pred):
@@ -24,7 +25,7 @@ def print_statistic(model, X_train, y_train, y_test, y_pred):
     print('coefficient of determination:', r_sq)
     print('Mean Absolute Error-MAE:', metrics.mean_absolute_error(y_test, y_pred))
     print('Root Mean Squared Error-RMSE:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
-    res.prediction_plot(y_test, y_pred)
+    res.prediction_histogram(y_test, y_pred)
 
 
 def train(dataset):
