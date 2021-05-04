@@ -141,7 +141,7 @@ def get_optimal_params(x, y):
     print(random_search.best_estimator_)
     print(random_search.best_params_)
 
-def train(dataframe, to_predict=True, print_stats=True):
+def train(dataframe, print_stats=True):
     x, y = extract_df(dataframe)
     x_train, y_train, x_test, y_test, x_val, y_val = reg.split_dataset(x, y)
 
@@ -167,13 +167,12 @@ def train(dataframe, to_predict=True, print_stats=True):
     )
     print("Best MAE: {:.2f} in {} rounds".format(model.best_score, model.best_iteration + 1))
 
-    if to_predict:
+    if print_stats:
         predictions = model.predict(test_mat)
-        if print_stats:
-            rmse = np.sqrt(mean_squared_error(y_test, predictions))
-            mae = mean_absolute_error(model.predict(test_mat), y_test)
-            r_sq = r2_score(y_test, predictions)
-            print("coefficient of determination:: %f" % r_sq)
-            print("RMSE: %f" % rmse)
-            print("MAE: %f" % mae)
-        return predictions
+        rmse = np.sqrt(mean_squared_error(y_test, predictions))
+        mae = mean_absolute_error(y_test, model.predict(test_mat))
+        r_sq = r2_score(y_test, predictions)
+        print("coefficient of determination:: %f" % r_sq)
+        print("RMSE: %f" % rmse)
+        print("MAE: %f" % mae)
+    return predictions
