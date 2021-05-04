@@ -131,7 +131,7 @@ def clear_outliers(dataframe):
     dataframe = dataframe[dataframe['number_of_reviews'] > 0]
     dataframe = dataframe[dataframe['number_of_reviews'] < 220]
     dataframe = dataframe[dataframe['zipcode'] < 12500]
-    mh.apply_log(dataframe)
+    mh.scale_data(dataframe)
     return dataframe
 
 
