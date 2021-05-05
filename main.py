@@ -7,6 +7,7 @@ from algorithms.neural_network import neural_networks_impl
 from algorithms import xgboost_impl
 from algorithms import adaboost_impl
 from algorithms import random_forest_impl
+from statistics import outliers, corelation
 import utility.enums as enum
 
 
@@ -17,15 +18,12 @@ df_munich = munich_handler.get_munich_data()
 #df_berlin = berlin_handler.get_berlin_dataset()
 #outliers.get_outliers_statistics(df_berlin)
 
-#model = regression_impl.train(df_munich, enum.RegressionType.LINEAR)
-#xgboost_impl.train(df_munich, True, True)
-#adaboost_impl.train(df_munich, True, True)
-#random_forest_impl.train(df_munich)
-
+# model = regression_impl.train(df_munich, enum.RegressionType.LINEAR)
+# xgboost_impl.train(df_munich, print_stats=True)
+# adaboost_impl.train(df_munich, True, True)
+# random_forest_impl.train(df_munich)
+print('-------------------------------')
+neural_networks_impl.train(df_munich, print_stats=True)
 #xgboost_impl.train(df_berlin, True, True)
 #adaboost_impl.train(df_berlin, True, True)
 #random_forest_impl.train(df_berlin)
-
-print('-------------------------------')
-neural_networks_impl.train(df_munich)
-
