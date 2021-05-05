@@ -32,9 +32,10 @@ class Network:
         return result
 
     # train the network
-    def fit(self, x_train, y_train, epochs, learning_rate):
+    def fit(self, x_train, y_train, epochs, learning_rate, early_stop_err):
         # sample dimension first
         samples = len(x_train)
+        previous_err = 0
 
         # training loop
         for epoch in range(epochs):
@@ -56,4 +57,7 @@ class Network:
 
             # calculate average error on all samples
             err = err / samples
+            if abs(previous_err - err) < early_stop_err:
+                break
+            previous_err = err
             print('epoch %d/%d   error=%f' % (epoch+1, epochs, err))

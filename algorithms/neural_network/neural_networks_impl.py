@@ -30,7 +30,7 @@ def train(dataframe, print_stats=True):
     net.add(ActivationLayer(linear, linear_prime))
 
     net.use(mse, mse_prime)
-    net.fit(x_train, y_train, epochs=1000, learning_rate=0.0001)
+    net.fit(x_train, y_train, epochs=1000, learning_rate=0.0001, early_stop_err=0.000001)
 
     # test
     out = net.predict(x_test)
